@@ -14,7 +14,7 @@ print(tabla_df)
 #  En este caso escribiremos el nombre de la columna, pero esta debe contener
 # valores unicos no repetidos para que se considere un indice valido
 tabla_df = pd.read_csv(
-    'Archivos csv txt xlsx y zip/avocado.csv', index_col=["Date"])
+    'Archivos adicionales/avocado.csv', index_col=["Date"])
 
 print(tabla_df)
 
