@@ -642,3 +642,181 @@ Respuesta
 6    1
 Name: count, dtype: int64
 """
+
+
+# Métodos de cuerda
+# Series está equipado con un conjunto de métodos de procesamiento de cadenas en el
+# str atributo que facilita el funcionamiento de cada elemento de la matriz, como en el
+# fragmento de código a continuación. Ver más en Métodos de cuerda Vectorizada
+
+s = pd.Series(["A", "B", "C", "Aaba", "Baca", np.nan, "CABA", "dog", "cat"])
+print(f'\n{s.str.lower()}')
+"""
+Respuesta
+0       a
+1       b
+2       c
+3    aaba
+4    baca
+5     NaN
+6    caba
+7     dog
+8     cat
+dtype: object
+"""
+
+# Fusionar
+
+# Concatenar
+# Pandas ofrece varias instalaciones para combinar fácilmente Series y DataFrame objetos con
+# varios tipos de lógica establecida para los índices y funcionalidad de álgebra relacional
+# en el caso de unión/tipo fusión operaciones.
+
+# Ver el sección de fusión
+
+# Concatenar objetos de pandas juntos en cuanto a filas con concat()
+
+df5 = pd.DataFrame(np.random.randn(10, 4))
+print(f'\n{df5}')
+"""
+Respuesta
+          0         1         2         3
+0  1.250592 -0.233044  0.951094  0.398591
+1 -1.529322 -1.000139  0.488478 -0.007104
+2  1.925160  0.744334  1.332696 -0.955043
+3  0.476547 -0.196675  2.896226 -0.132099
+4 -0.843242  0.248651 -2.519125  0.429489
+5 -1.802613  0.870560 -1.398827  0.640528
+6 -1.043552  0.545058  0.595105  1.054205
+7 -1.089379  1.049125 -0.913323 -0.773750
+8 -0.775783 -1.261547  0.106367 -0.980901
+9 -1.574588 -1.462179 -0.067068  0.359147
+"""
+
+# brek ir into pieces
+pieces = [df5[:3], df5[3:7], df5[7:]]
+print(f'\n{pd.concat(pieces)}')
+
+# Nota
+# Agregar una columna a un DataFrame es relativamente rápido. Sin embargo, agregando
+# una fila requiere una copia y puede ser costosa. Recomendamos pasar a lista de registros
+# preconstruida para el DataFrame constructor en su lugar de construir un DataFrame
+# anexando iterativamente registros a él.
+
+# Unificar
+# merge() permite tipos de unión de estilo SQL a lo largo de columnas específicas. Ver el
+# unión de estilo de base de datos sección
+
+left = pd.DataFrame({"key": ["foo", "foo"], "lval": [1, 2]})
+right = pd.DataFrame({"key": ["foo", "foo"], "rval": [4, 5]})
+
+print(f'\n{left}')
+"""
+Respuesta
+   key  lval
+0  foo     1
+1  foo     2
+"""
+
+print(f'\n{right}')
+"""
+Respuesta
+   key  rval
+0  foo     4
+1  foo     5
+"""
+
+print(f'\n{pd.merge(left, right, on="key")}')
+"""
+Respuesta
+   key  lval  rval
+0  foo     1     4
+1  foo     1     5
+2  foo     2     4
+3  foo     2     5
+"""
+
+# marge() unificar en llaves únicas:
+
+left1 = pd.DataFrame({"key": ["foo", "bar"], "lval": [1, 2]})
+right1 = pd.DataFrame({"key": ["foo", "bar"], "rval": [4, 5]})
+
+print(f'\n{left1}')
+"""
+Respuesta
+   key  lval
+0  foo     1
+1  bar     2
+"""
+
+print(f'\n{right1}')
+"""
+Respuesta
+   key  rval
+0  foo     4
+1  bar     5
+"""
+
+print(f'\n{pd.merge(left1, right1, on="key")}')
+"""
+Respuesta
+   key  lval  rval
+0  foo     1     4
+1  bar     2     5
+"""
+
+# Agrupación
+# Por "group by" nos referimos a un proceso que involucra a uno o más de los pasos siguientes:
+# · Dividiendo los datos en grupos basados en algunos criterios
+# · Aplicando una función para cada grupo de forma independiente
+# · Combinando los resultados en una estructura de datos
+
+df6 = pd.DataFrame(
+    {
+        "A": ["foo", "bar", "foo", "bar", "foo", "bar", "foo", "foo"],
+        "B": ["one", "one", "two", "three", "two", "two", "one", "three"],
+        "C": np.random.randn(8),
+        "D": np.random.randn(8),
+    }
+)
+
+print(f'\n{df6}')
+"""
+Respuesta
+     A      B         C         D
+0  foo    one -0.305530  0.644844
+1  bar    one -0.255678  0.892210
+2  foo    two  1.369921  1.082467
+3  bar  three -0.079749  0.902532
+4  foo    two  0.487012 -0.124013
+5  bar    two  0.997006  0.937599
+6  foo    one  0.433248  0.106527
+7  foo  three -1.013924  0.299282
+"""
+
+# Agrupación para una etiqueta de columna, selección de etiquetas de columna y luego aplicación
+# de la DataFrameGroupBy.sum() función al resultado grupos:
+
+print(f'\n{df6.groupby("A")[["C", "D"]].sum()}')
+"""
+Respuesta
+            C         D
+A                      
+bar -2.713273  0.482752
+foo  2.996815  0.468895
+"""
+
+# Agrupación por múltiples columnas formularios de etiqueta MultiIndex
+
+print(f'\n{df6.groupby(["A", "B"]).sum()}')
+"""
+Respuesta
+                  C         D
+A   B                        
+bar one   -1.228361  1.318540
+    three  0.843708 -0.388109
+    two   -1.517024  0.428854
+foo one   -1.300228  0.129348
+    three  0.579920  1.037365
+    two    0.816559  1.334073
+"""
